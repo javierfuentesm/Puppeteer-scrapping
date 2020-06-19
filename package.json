@@ -1,0 +1,18 @@
+{
+  "name": "PPTR-Scrapping",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^4.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.0.5"
+  }
+}
