@@ -1,3 +1,3 @@
 module.exports = {
-	url: 'https://www.cnn.com/world',
+	url: 'https://www.foxnews.com/category/health/infectious-disease/coronavirus',
 }
