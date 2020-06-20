@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer')
 const random_useragent = require('random-useragent')
 const { url } = require('./config')
+const fs = require('fs')
 
 ;(async () => {
 	const browser = await puppeteer.launch({ headless: true })
@@ -38,18 +39,22 @@ const { url } = require('./config')
 	const cleanLinks = links.filter((item) => !item.includes('video.foxnews'))
 
 	const info = async (subUrl) => {
-		const articlePage = await browser.newPage()
+		const subBrowser = await puppeteer.launch({ headless: true })
+		const articlePage = await subBrowser.newPage()
 		await articlePage.goto(subUrl)
 		await articlePage.goto(subUrl, { waitUntil: 'networkidle2' })
+
 		try {
 			const title = await articlePage.$eval('.headline', (e) => e.textContent)
 			const body = await articlePage.$$eval(
 				'#wrapper > div.page-content > div.row.full > main > article > div > div > div.article-body > p',
 				(parrafos) => parrafos.map((parrafo) => parrafo.textContent)
 			)
+			await subBrowser.close()
 
 			return { title, body }
 		} catch (e) {
+			await subBrowser.close()
 			console.error(e)
 		}
 	}
@@ -59,8 +64,18 @@ const { url } = require('./config')
 		articles = { ...articles, articulos: articles.articulos.concat(article) }
 	}
 
-	console.log(articles)
-
+	fs.writeFile(
+		'articles.json',
+		JSON.stringify(articles),
+		'utf8',
+		(err, data) => {
+			if (err) {
+				console.error(err)
+			} else {
+				console.log('created!')
+			}
+		}
+	)
 	await browser.close()
 })().catch((err) => {
 	console.error(err)
